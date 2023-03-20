@@ -1,4 +1,4 @@
-# securescan
+# Securescan
 An agent based vulnerability scanner that scans for threats in system.
 
 ## Installation
