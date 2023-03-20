@@ -14,6 +14,7 @@ import requests
 from nvd_api import NvdApiClient
 from pprint import pprint
 from nvd_api.low_api.exceptions import NotFoundException
+from nvd_api.low_api.exceptions import ApiAttributeError
 from halo import Halo
 
 def check_os_vulns():
@@ -41,12 +42,15 @@ def check_os_vulns():
                     results_per_page=1,
                     start_index=1
                 )
-                if cve_details:
-                    cve_id = cve_details["cve"]["CVE_data_meta"]["ID"]
-                    cve_description = cve_details["cve"]["description"]["description_data"][0]["value"]
-                    cves.append((cve_id, cve_description))
-                # Add package and associated CVEs to dictionary
-                packages[package_name] = {"version": package_version, "cves": cves}
+                try:
+                    if cve_details:
+                        cve_id = cve_details["cve"]["CVE_data_meta"]["ID"]
+                        cve_description = cve_details["cve"]["description"]["description_data"][0]["value"]
+                        cves.append((cve_id, cve_description))
+                    # Add package and associated CVEs to dictionary
+                    packages[package_name] = {"version": package_version, "cves": cves}
+                except ApiAttributeError:
+                    pass
             except NotFoundException:
                 pass
 
